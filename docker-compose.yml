@@ -1,0 +1,170 @@
+version: '3.0'
+
+services:
+  portainer:
+    container_name: portainer
+    image: portainer/portainer
+    restart: always
+    ports:
+      - "${PORTAINER_PORT}:9000/tcp"
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_CONFIG_DIR}/portainer:/data
+
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin
+    ports:
+      - "${JELLYFIN_WEB_PORT}:8096"
+      - "${JELLYFIN_LOCAL_NETWORK_DISCOVERY_PORT}:7359/udp"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
+      - ${MOVIES_DIR}:/movies
+      - ${TV_DIR}:/tv
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  transmission:
+    container_name: transmission
+    image: lscr.io/linuxserver/transmission:latest
+    ports:
+      - "${TRANSMISSION_WEBUI_PORT}:9091"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413"
+      - "${TRANSMISSION_CONNECTION_PORT}-51413/udp"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TRANSMISSION_WEBUI_USER=${TRANSMISSION_WEBUI_USER}
+      - TRANSMISSION_WEBUI_PASS=${TRANSMISSION_WEBUI_PASS}
+      - TRANSMISSION_WEBUI_PORT=${TRANSMISSION_WEBUI_PORT}
+      - TRANSMISSION_MAX_RETENTION=${TRANSMISSION_MAX_RETENTION}
+      - TRANSMISSION_MAX_RATIO=${TRANSMISSION_CONNECTION_PORT}
+      - TRANSMISSION_CONNECTION_PORT=${TRANSMISSION_CONNECTION_PORT}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+      - SONARR_PORT=${SONARR_PORT}
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - RADARR_PORT=${RADARR_PORT}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/transmission/config:/config
+      - ${DOWNLOAD_DIR}:/downloads
+      - ${MEDIA_DIR}:/media
+    restart: unless-stopped
+
+  prowlarr:
+    container_name: prowlarr
+    image: lscr.io/linuxserver/prowlarr:latest
+    ports:
+      - "${PROWLARR_PORT}:${PROWLARR_PORT}"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/prowlarr/config:/config
+    restart: unless-stopped
+
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:latest
+    ports:
+      - "${RADARR_PORT}:7878"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/radarr/config:/config
+      - ${DOWNLOAD_DIR}:/downloads
+      - ${MOVIES_DIR}:/movies
+    restart: unless-stopped
+
+  sonarr:
+    container_name: sonarr
+    image: linuxserver/sonarr:latest
+    ports:
+      - "${SONARR_PORT}:8989"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/sonarr/config:/config
+      - ${DOWNLOAD_DIR}:/downloads
+      - ${TV_DIR}:/tv
+      - ${BASE_DIR}:/data
+    restart: unless-stopped
+
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    ports:
+      - "${BAZARR_PORT}:6767"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/bazarr/config:/config
+      - ${MOVIES_DIR}:/movies
+      - ${TV_DIR}:/tv
+    restart: unless-stopped
+
+  heimdall:
+    container_name: heimdall
+    image: lscr.io/linuxserver/heimdall:latest
+    ports:
+      - ${HEIMDALL_PORT}:80
+      - ${HEIMDALL_SSL_PORT}:443
+    volumes:
+      - ${CONFIG_DIR}/heimdall/config:/config
+
+## System Monitoring
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/prometheus/prometheus.yml
+    restart: unless-stopped
+
+  node-exporter:
+    container_name: node-exporter
+    image: quay.io/prometheus/node-exporter:latest
+    network_mode: host
+    ports:
+      - "${NODE_EXPORTER_PORT}:${NODE_EXPORTER_PORT}"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /:/host:ro, slave
+    restart: unless-stopped
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/grafana/datasources.yml
+    restart: unless-stopped
