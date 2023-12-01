@@ -27,6 +27,8 @@ services:
       - ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
       - ${MOVIES_DIR}:/movies
       - ${TV_DIR}:/tv
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
