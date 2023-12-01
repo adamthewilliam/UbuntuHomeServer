@@ -31,13 +31,14 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  ## Download clients ##
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
     ports:
       - "${TRANSMISSION_WEBUI_PORT}:9091"
       - "${TRANSMISSION_CONNECTION_PORT}:51413"
-      - "${TRANSMISSION_CONNECTION_PORT}-51413/udp"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
@@ -54,6 +55,24 @@ services:
       - RADARR_PORT=${RADARR_PORT}
     volumes:
       - ${DOCKER_CONFIG_DIR}/transmission/config:/config
+      - ${DOWNLOAD_DIR}:/downloads
+      - ${MEDIA_DIR}:/media
+    restart: unless-stopped
+
+  qbittorrent:
+    container_name: qbittorrent
+    image: hotio/qbittorrent:latest
+    ports:
+      - "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
+      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
+      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ={TZ}
+      - WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}qbittorrent/config:/config
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
@@ -99,7 +118,6 @@ services:
       - ${DOCKER_CONFIG_DIR}/sonarr/config:/config
       - ${DOWNLOAD_DIR}:/downloads
       - ${TV_DIR}:/tv
-      - ${BASE_DIR}:/data
     restart: unless-stopped
 
   bazarr:
@@ -124,7 +142,7 @@ services:
       - ${HEIMDALL_PORT}:80
       - ${HEIMDALL_SSL_PORT}:443
     volumes:
-      - ${CONFIG_DIR}/heimdall/config:/config
+      - ${DOCKER_CONFIG_DIR}/heimdall/config:/config
 
 ## System Monitoring
   prometheus:
