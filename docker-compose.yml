@@ -23,6 +23,7 @@ services:
       - TZ=${TZ}
       - PUID=${PUID}
       - PGID=${PGID}
+      - DOCKER_MODS=davvos11/jellyfin-intro-skipper-mod:latest
     volumes:
       - ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
       - ${MOVIES_DIR}:/movies
@@ -32,6 +33,20 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  ## Jellyseer ##
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+        - LOG_LEVEL=debug
+        - TZ=${TZ}
+    ports:
+        - "${JELLYSEER_WEB_PORT}:${JELLYSEER_WEB_PORT}"
+    volumes:
+        - ${DOCKER_CONFIG_DIR}/jellyseer/config:/config
+    restart: unless-stopped
 
   ## Download clients ##
   transmission:
