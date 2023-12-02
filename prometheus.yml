@@ -3,39 +3,9 @@ global:
   scrape_timeout: 10s
   evaluation_interval: 15s
 scrape_configs:
-- job_name: prometheus
-  static_configs:
-  - targets:
-    - host.docker.internal:9090
-- job_name: node-exporter
-  static_configs:
-  - targets:
-    - host.docker.internal:9100
-- job_name: portainer
-  static_configs:
-  - targets:
-    - host.docker.internal:9000
-- job_name: jellyfin
-  static_configs:
-  - targets:
-    - host.docker.internal:8096
-- job_name: transmission
-  static_configs:
-  - targets:
-    - host.docker.internal:9091
-- job_name: sonarr
-  static_configs:
-  - targets:
-    - host.docker.internal:8989
-- job_name: radarr
-  static_configs:
-  - targets:
-    - host.docker.internal:7878
-- job_name: prowlarr
-  static_configs:
-  - targets:
-    - host.docker.internal:9696
-- job_name: bazarr
-  static_configs:
-  - targets:
-    - host.docker.internal:6767
+  - job_name: node-exporter
+    static_configs:
+      - targets: ['192.168.1.125:9100']
+  - job_name: prometheus
+    static_configs:
+      - targets: ['prometheus:9090']

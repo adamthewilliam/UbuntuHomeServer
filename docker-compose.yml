@@ -172,21 +172,25 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
     volumes:
-      - ${DOCKER_CONFIG_DIR}/prometheus/prometheus.yml
+      - ${DOCKER_CONFIG_DIR}/prometheus/config/prometheus.yml:/etc/config/prometheus.yml
+      - ${DOCKER_CONFIG_DIR}/prometheus/prometheus-data:/prometheus-data
+    command: "--config.file=/etc/config/prometheus.yml"
     restart: unless-stopped
 
   node-exporter:
     container_name: node-exporter
     image: quay.io/prometheus/node-exporter:latest
     network_mode: host
-    ports:
-      - "${NODE_EXPORTER_PORT}:${NODE_EXPORTER_PORT}"
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
       - /:/host:ro, slave
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+    command:
+      - --path.rootfs=/host
+      - --collector.systemd
     restart: unless-stopped
 
   grafana:
@@ -201,5 +205,5 @@ services:
       - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
     volumes:
-      - ${DOCKER_CONFIG_DIR}/grafana/datasources.yml
+      - ${DOCKER_CONFIG_DIR}/grafana/provisioning/datasources.yml
     restart: unless-stopped
