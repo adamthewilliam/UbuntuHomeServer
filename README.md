@@ -1,4 +1,4 @@
-Steps to setup your own ubuntu server using docker compose to containerise many different applications with seamless maintenance.
+Steps to setup your own ubuntu server using docker compose to containerise many different applications with seamless maintenance achieving something like below.
 
 ![Screenshot](Screenshots/portainer-screenshot.png)
 
