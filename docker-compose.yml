@@ -207,3 +207,21 @@ services:
     volumes:
       - ${DOCKER_CONFIG_DIR}/grafana/provisioning/datasources.yml
     restart: unless-stopped
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "${PIHOLE_WEB_PORT}:${PIHOLE_WEB_PORT}/tcp"
+      - "${PIHOLE_WEB_PORT}:${PIHOLE_WEB_PORT}/udp"
+      - "67:67/udp"
+      - "8484:${PIHOLE_CONNECTION_PORT}/tcp" # Mapped 8484 to 80
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: ${PIHOLE_WEB_PASSWORD}
+      FTLCONF_LOCAL_IPV4: ${SERVER_LAN_IP}
+      PIHOLE_DNS: 1.1.1.1;1.0.0.1 #CloudFlare DNS
+    volumes:
+      - "${DOCKER_CONFIG_DIR}/pihole:/etc/pihole"
+      - "${DOCKER_CONFIG_DIR}/dnsmasq.d:/etc/dnsmasq.d"
+    restart: unless-stopped
