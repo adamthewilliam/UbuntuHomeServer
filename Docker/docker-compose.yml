@@ -34,8 +34,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  ## Jellyseer ##
-
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
@@ -93,6 +91,8 @@ services:
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
+
+## aars ##
 
   prowlarr:
     container_name: prowlarr
