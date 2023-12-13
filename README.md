@@ -77,11 +77,17 @@ Whilst inside the root of the docker directory `/docker` run the following comma
 
 At this point, you should be ready to run docker-compose with the following command whilst inside the root of the docker directory `docker compose up -d` or `sudo docker compose up -d`.
 
+## Container Setup ##
 
-
+In this guide, I will not be providing any additional help with setting up all of the different containers in the web UI. There are many guides and the applications even have their own documentation on their websites. I have provided links below that will be useful for this stage.
 
 
 ## Useful Links  ##
 
-https://github.com/ghostserverd/mediaserver-docker/tree/master#installation
-https://trash-guides.info
+- https://github.com/ghostserverd/mediaserver-docker/tree/master#installation
+- https://trash-guides.info
+- v
+- https://wiki.servarr.com/radarr/quick-start-guide
+- https://wiki.servarr.com/sonarr/quick-start-guide
+- 
+- https://www.phind.com/search?home=true
