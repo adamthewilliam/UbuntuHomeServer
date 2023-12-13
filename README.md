@@ -1,4 +1,4 @@
-Steps to setup your own ubuntu server using docker compose to containerise many different applications with seamless maintenance achieving something like below.
+Guide to setup your own ubuntu server using docker compose to containerise many different applications with seamless maintenance achieving something like below.
 
 ![Screenshot](Screenshots/portainer-screenshot.png)
 
@@ -64,6 +64,22 @@ Run the following comand to find out information about your drives before mounti
 This command simply mounts your drive to a given directory. The parameters uid and gid are providing the user and group with permissions to read/write on the mount. This is crucial for Radarr, Sonarr, bazarr and prowlarr to work!
 
 `sudo mount -t exfat -o defaults,uid=1000,gid=1000 /dev/sda2 /mnt/media/media-server`
+
+## Setup Directory Structure ##
+
+Using the above sections on the desired directory structure go and create it. The command to create directories is `mkdir {directory}` or `sudo mkdir {directory}`. For example, I could whilst inside `/mnt/media/media-server` I could run the following command `sudo mkdir data/downloads`
+
+## Setup .env file ##
+
+Whilst inside the root of the docker directory `/docker` run the following commands one by one: `touch .env`, `sudo chown root:root .env`, `sudo chmod 600 .env`. This command creates a .env file at the root. To edit the .env file run the following command `sudo nano ~/docker/.env` and input the environment variables provided in the example file with whatever changes you want to make.
+
+## Running Docker Compose ##
+
+At this point, you should be ready to run docker-compose with the following command whilst inside the root of the docker directory `docker compose up -d` or `sudo docker compose up -d`.
+
+
+
+
 
 ## Useful Links  ##
 
