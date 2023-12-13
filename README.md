@@ -65,4 +65,7 @@ This command simply mounts your drive to a given directory. The parameters uid a
 
 `sudo mount -t exfat -o defaults,uid=1000,gid=1000 /dev/sda2 /mnt/media/media-server`
 
-##  ##
+## Useful Links  ##
+
+https://github.com/ghostserverd/mediaserver-docker/tree/master#installation
+https://trash-guides.info
