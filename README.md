@@ -86,8 +86,8 @@ In this guide, I will not be providing any additional help with setting up all o
 
 - https://github.com/ghostserverd/mediaserver-docker/tree/master#installation
 - https://trash-guides.info
-- v
 - https://wiki.servarr.com/radarr/quick-start-guide
 - https://wiki.servarr.com/sonarr/quick-start-guide
-- 
+- https://wiki.servarr.com/prowlarr/quick-start-guide
+- https://github.com/awesome-jellyfin/awesome-jellyfin
 - https://www.phind.com/search?home=true
