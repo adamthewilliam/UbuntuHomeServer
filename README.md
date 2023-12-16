@@ -5,7 +5,7 @@ Guide to setup your own ubuntu server using docker compose to containerise many 
 
 ## Ubuntu Server Install ##
 
-1. Get a USB stick, install the latest LTS version of Ubuntu Server and then download balanaEtcher. Run balanaEtcher with what you just downloaded and turn your usb stick into a bootable drive.
+1. Get a USB stick, install the latest LTS version of **Ubuntu Server** and then download balanaEtcher. Run balanaEtcher with what you just downloaded and turn your usb stick into a bootable drive.
 2. Plug the USB stick into your server, turn on the server and follow the steps to setting up your server via the console. If you're failing to find drivers then shutdown the installation and re-run the computer to get into the BIOS settings. One common reason for a missing drive is RAID enabled so disable that if so.
 3. You have now finished your installation of Ubuntu Server and you should be ready to start creating Docker containers and orchestrating them via docker compose.
 4. Install docker https://docs.docker.com/install/#supported-platforms, docker-compose https://docs.docker.com/compose/install/#install-compose, 
