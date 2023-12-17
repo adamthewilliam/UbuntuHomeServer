@@ -43,7 +43,7 @@ services:
     ports:
         - "${JELLYSEER_WEB_PORT}:${JELLYSEER_WEB_PORT}"
     volumes:
-        - ${DOCKER_CONFIG_DIR}/jellyseer/config:/config
+        - ${DOCKER_CONFIG_DIR}/jellyseer/config:/app/config
     restart: unless-stopped
 
   ## Download clients ##
