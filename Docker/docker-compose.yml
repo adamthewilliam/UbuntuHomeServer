@@ -44,6 +44,8 @@ services:
         - "${JELLYSEER_WEB_PORT}:${JELLYSEER_WEB_PORT}"
     volumes:
         - ${DOCKER_CONFIG_DIR}/jellyseer/config:/app/config
+    dns:
+      - "1.1.1.1"
     restart: unless-stopped
 
   ## Download clients ##
