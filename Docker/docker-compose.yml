@@ -108,6 +108,9 @@ services:
       - TZ=${TZ}
     volumes:
       - ${DOCKER_CONFIG_DIR}/prowlarr/config:/config
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
     restart: unless-stopped
 
   radarr:
