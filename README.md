@@ -73,6 +73,8 @@ Using the above sections on the desired directory structure go and create it. Th
 
 Whilst inside the root of the docker directory `/docker` run the following commands one by one: `touch .env`, `sudo chown root:root .env`, `sudo chmod 600 .env`. This command creates a .env file at the root. To edit the .env file run the following command `sudo nano ~/docker/.env` and input the environment variables provided in the example file with whatever changes you want to make.
 
+**Important: Make sure you update the .env file with your values! Especially the SERVER_LAN_IP variable if you're using PiHole.**
+
 ## Running Docker Compose ##
 
 At this point, you should be ready to run docker-compose with the following command whilst inside the root of the docker directory `docker compose up -d` or `sudo docker compose up -d`.
