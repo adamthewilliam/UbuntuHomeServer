@@ -86,6 +86,7 @@ In this guide, I will not be providing any additional help with setting up all o
 ## Notes ##
 
 - Some containers especially the arrs will have cloudflare DNS (1.1.1.1 and 1.0.0.1) provided in config so they don't use the PiHole container for DNS resolve. Without this, these containers will not work properly and will fail to the find indexers etc. Obviously, if you're not using PiHole then you can remove the dns config from your containers.
+- If you're unfortunate enough to have Virgin Media as your ISP then you will need to setup a VPN in front of your prowlarr container so prowlarr can communciate with the indexers. To do this, choose the best VPN service for you and setup a Gluetun container 'https://github.com/qdm12/gluetun' inside your docker-compose.yml. The Gluetun wiki provides setup instructions for most VPN providers 'https://github.com/qdm12/gluetun-wiki'
 
 ## Useful Links  ##
 
