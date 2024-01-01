@@ -81,6 +81,9 @@ At this point, you should be ready to run docker-compose with the following comm
 
 In this guide, I will not be providing any additional help with setting up all of the different containers in the web UI. There are many guides and the applications even have their own documentation on their websites. I have provided links below that will be useful for this stage.
 
+## Notes ##
+
+- Some containers especially the arrs will have cloudflare DNS (1.1.1.1 and 1.0.0.1) provided in config so they don't use the PiHole container for DNS resolve. Without this, these containers will not work properly and will fail to the find indexers etc. Obviously, if you're not using PiHole then you can remove the dns config from your containers.
 
 ## Useful Links  ##
 
