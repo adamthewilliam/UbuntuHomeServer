@@ -53,10 +53,11 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
+    ##network_mode: host
     ports:
-      - "${TRANSMISSION_WEBUI_PORT}:9091"
-      - "${TRANSMISSION_CONNECTION_PORT}:51413"
-      - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
+    - "${TRANSMISSION_WEBUI_PORT}:9091"
+    - "${TRANSMISSION_CONNECTION_PORT}:51413"
+    - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
@@ -71,6 +72,7 @@ services:
       - SONARR_PORT=${SONARR_PORT}
       - RADARR_API_KEY=${RADARR_API_KEY}
       - RADARR_PORT=${RADARR_PORT}
+      - PEERPORT=${TRANSMISSION_CONNECTION_PORT}
     volumes:
       - ${DOCKER_CONFIG_DIR}/transmission/config:/config
       - ${DOWNLOAD_DIR}:/downloads
@@ -126,6 +128,9 @@ services:
       - ${DOCKER_CONFIG_DIR}/radarr/config:/config
       - ${DOWNLOAD_DIR}:/downloads
       - ${MOVIES_DIR}:/movies
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
     restart: unless-stopped
 
   sonarr:
@@ -141,6 +146,9 @@ services:
       - ${DOCKER_CONFIG_DIR}/sonarr/config:/config
       - ${DOWNLOAD_DIR}:/downloads
       - ${TV_DIR}:/tv
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
     restart: unless-stopped
 
   bazarr:
