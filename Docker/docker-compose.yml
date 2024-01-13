@@ -78,7 +78,7 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
-    network_mode: container:gluetun
+    network_mode: service:gluetun
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
@@ -99,11 +99,13 @@ services:
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
+    depends_on:
+      - gluetun
 
   qbittorrent:
     container_name: qbittorrent
     image: lscr.io/linuxserver/qbittorrent:latest
-    network_mode: container:gluetun
+    network_mode: service:gluetun
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
@@ -114,6 +116,8 @@ services:
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
+    depends_on:
+      - gluetun
 
 ## aars ##
 
