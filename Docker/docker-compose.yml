@@ -49,15 +49,36 @@ services:
       - "1.0.0.1"
     restart: unless-stopped
 
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "${TRANSMISSION_WEBUI_PORT}:9091"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
+      - "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
+      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
+      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
+    devices:
+    - /dev/net/tun
+    volumes:
+    - ${DOCKER_CONFIG_DIR}/gluetun:/gluetun
+    environment:
+      - TZ=${TZ}
+      - VPN_SERVICE_PROVIDER=airvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - FIREWALL_VPN_INPUT_PORTS=${VPN_FORWARDED_PORT}
+
   ## Download clients ##
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
-    ##network_mode: host
-    ports:
-    - "${TRANSMISSION_WEBUI_PORT}:9091"
-    - "${TRANSMISSION_CONNECTION_PORT}:51413"
-    - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
+    network_mode: container:gluetun
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
@@ -81,18 +102,15 @@ services:
 
   qbittorrent:
     container_name: qbittorrent
-    image: hotio/qbittorrent:latest
-    ports:
-      - "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
-      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
-      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
+    image: lscr.io/linuxserver/qbittorrent:latest
+    network_mode: container:gluetun
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ={TZ}
       - WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
     volumes:
-      - ${DOCKER_CONFIG_DIR}qbittorrent/config:/config
+      - ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
