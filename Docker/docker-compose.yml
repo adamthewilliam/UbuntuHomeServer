@@ -13,26 +13,52 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DOCKER_CONFIG_DIR}/portainer:/data
 
-  jellyfin:
-    container_name: jellyfin
-    image: jellyfin/jellyfin
-    ports:
-      - "${JELLYFIN_WEB_PORT}:8096"
-      - "${JELLYFIN_LOCAL_NETWORK_DISCOVERY_PORT}:7359/udp"
+  #jellyfin:
+    #container_name: jellyfin
+    #image: jellyfin/jellyfin
+    #ports:
+      #- "${JELLYFIN_WEB_PORT}:8096"
+      #- "${JELLYFIN_LOCAL_NETWORK_DISCOVERY_PORT}:7359/udp"
+    #environment:
+      #- TZ=${TZ}
+      #- PUID=${PUID}
+      #- PGID=${PGID}
+      #- DOCKER_MODS=davvos11/jellyfin-intro-skipper-mod:latest
+    #volumes:
+      #- ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
+      #- ${MOVIES_DIR}:/movies
+      #- ${TV_DIR}:/tv
+    #devices:
+      #- /dev/dri/renderD128:/dev/dri/renderD128
+    #restart: unless-stopped
+    #extra_hosts:
+      #- "host.docker.internal:host-gateway"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    command: tunnel --no-autoupdate run
     environment:
-      - TZ=${TZ}
+      - TUNNEL_TOKEN=${CLOUDFLARED_TOKEN}
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
+    restart: unless-stopped
+
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - DOCKER_MODS=davvos11/jellyfin-intro-skipper-mod:latest
+      - TZ=Etc/UTC
+      - VERSION=docker
+    network_mode: host
     volumes:
-      - ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
+      - ${DOCKER_CONFIG_DIR}/plex/config:/config
       - ${MOVIES_DIR}:/movies
       - ${TV_DIR}:/tv
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
     restart: unless-stopped
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -55,9 +81,6 @@ services:
     cap_add:
       - NET_ADMIN
     ports:
-      - "${TRANSMISSION_WEBUI_PORT}:9091"
-      - "${TRANSMISSION_CONNECTION_PORT}:51413"
-      - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
       - "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
       - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
       - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
@@ -78,7 +101,10 @@ services:
   transmission:
     container_name: transmission
     image: lscr.io/linuxserver/transmission:latest
-    network_mode: service:gluetun
+    ports:
+      - "${TRANSMISSION_WEBUI_PORT}:9091"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413"
+      - "${TRANSMISSION_CONNECTION_PORT}:51413/udp"
     environment:
       - TZ=${TZ}
       - PUID=${PUID}
@@ -99,8 +125,6 @@ services:
       - ${DOWNLOAD_DIR}:/downloads
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
-    depends_on:
-      - gluetun
 
   qbittorrent:
     container_name: qbittorrent
@@ -187,15 +211,6 @@ services:
       - ${MOVIES_DIR}:/movies
       - ${TV_DIR}:/tv
     restart: unless-stopped
-
-  heimdall:
-    container_name: heimdall
-    image: lscr.io/linuxserver/heimdall:latest
-    ports:
-      - ${HEIMDALL_PORT}:80
-      - ${HEIMDALL_SSL_PORT}:443
-    volumes:
-      - ${DOCKER_CONFIG_DIR}/heimdall/config
 
 ## System Monitoring
   prometheus:
