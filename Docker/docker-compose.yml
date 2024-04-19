@@ -13,27 +13,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${DOCKER_CONFIG_DIR}/portainer:/data
 
-  #jellyfin:
-    #container_name: jellyfin
-    #image: jellyfin/jellyfin
-    #ports:
-      #- "${JELLYFIN_WEB_PORT}:8096"
-      #- "${JELLYFIN_LOCAL_NETWORK_DISCOVERY_PORT}:7359/udp"
-    #environment:
-      #- TZ=${TZ}
-      #- PUID=${PUID}
-      #- PGID=${PGID}
-      #- DOCKER_MODS=davvos11/jellyfin-intro-skipper-mod:latest
-    #volumes:
-      #- ${DOCKER_CONFIG_DIR}/jellyfin/config:/config
-      #- ${MOVIES_DIR}:/movies
-      #- ${TV_DIR}:/tv
-    #devices:
-      #- /dev/dri/renderD128:/dev/dri/renderD128
-    #restart: unless-stopped
-    #extra_hosts:
-      #- "host.docker.internal:host-gateway"
-
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared
@@ -59,20 +38,18 @@ services:
       - ${MOVIES_DIR}:/movies
       - ${TV_DIR}:/tv
     restart: unless-stopped
-
-  jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
+  
+  overseerr:
+    image: lscr.io/linuxserver/overseerr:latest
+    container_name: overseerr
     environment:
-        - LOG_LEVEL=debug
-        - TZ=${TZ}
-    ports:
-        - "${JELLYSEER_WEB_PORT}:${JELLYSEER_WEB_PORT}"
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=Etc/UTC
     volumes:
-        - ${DOCKER_CONFIG_DIR}/jellyseer/config:/app/config
-    dns:
-      - "1.1.1.1"
-      - "1.0.0.1"
+      - ${DOCKER_CONFIG_DIR}/overseerr/config:/config
+    ports:
+      - ${OVERSEER_PORT}:${OVERSEER_PORT}
     restart: unless-stopped
 
   gluetun:
