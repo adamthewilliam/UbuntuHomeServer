@@ -38,7 +38,7 @@ services:
       - ${MOVIES_DIR}:/movies
       - ${TV_DIR}:/tv
     restart: unless-stopped
-  
+
   overseerr:
     image: lscr.io/linuxserver/overseerr:latest
     container_name: overseerr
