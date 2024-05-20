@@ -52,27 +52,27 @@ services:
       - ${OVERSEER_PORT}:${OVERSEER_PORT}
     restart: unless-stopped
 
-  gluetun:
-    image: qmcgaw/gluetun
-    container_name: gluetun
-    cap_add:
-      - NET_ADMIN
-    ports:
-      - "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
-      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
-      - "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
-    devices:
-    - /dev/net/tun
-    volumes:
-    - ${DOCKER_CONFIG_DIR}/gluetun:/gluetun
-    environment:
-      - TZ=${TZ}
-      - VPN_SERVICE_PROVIDER=airvpn
-      - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
-      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - FIREWALL_VPN_INPUT_PORTS=${VPN_FORWARDED_PORT}
+  #gluetun:
+    #image: qmcgaw/gluetun
+    #container_name: gluetun
+    #cap_add:
+      #- NET_ADMIN
+    #ports:
+      #- "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
+      #- "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
+      #- "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
+   # devices:
+    #- /dev/net/tun
+    #volumes:
+    #- ${DOCKER_CONFIG_DIR}/gluetun:/gluetun
+    #environment:
+      #- TZ=${TZ}
+      #- VPN_SERVICE_PROVIDER=airvpn
+      #- VPN_TYPE=wireguard
+      #- WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      #- WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      #- WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      #- FIREWALL_VPN_INPUT_PORTS=${VPN_FORWARDED_PORT}
 
   ## Download clients ##
   transmission:
@@ -103,22 +103,22 @@ services:
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
 
-  qbittorrent:
-    container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:latest
-    network_mode: service:gluetun
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ={TZ}
-      - WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
-    volumes:
-      - ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
-      - ${DOWNLOAD_DIR}:/downloads
-      - ${MEDIA_DIR}:/media
-    restart: unless-stopped
-    depends_on:
-      - gluetun
+  #qbittorrent:
+    #container_name: qbittorrent
+    #image: lscr.io/linuxserver/qbittorrent:latest
+    #network_mode: service:gluetun
+    #environment:
+      #- PUID=${PUID}
+      #- PGID=${PGID}
+      #- TZ={TZ}
+      #- WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
+    #volumes:
+      #- ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
+      #- ${DOWNLOAD_DIR}:/downloads
+      #- ${MEDIA_DIR}:/media
+    #restart: unless-stopped
+    #depends_on:
+      #- gluetun
 
 ## aars ##
 
@@ -190,51 +190,51 @@ services:
     restart: unless-stopped
 
 ## System Monitoring
-  prometheus:
-    container_name: prometheus
-    image: prom/prometheus
-    ports:
-      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-    volumes:
-      - ${DOCKER_CONFIG_DIR}/prometheus/config/prometheus.yml:/etc/config/prometheus.yml
-      - ${DOCKER_CONFIG_DIR}/prometheus/prometheus-data:/prometheus-data
-    command: "--config.file=/etc/config/prometheus.yml"
-    restart: unless-stopped
+  #prometheus:
+    #container_name: prometheus
+    #image: prom/prometheus
+    #ports:
+      #- "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    #environment:
+      #- TZ=${TZ}
+      #- PUID=${PUID}
+      #- PGID=${PGID}
+    #volumes:
+      #- ${DOCKER_CONFIG_DIR}/prometheus/config/prometheus.yml:/etc/config/prometheus.yml
+      #- ${DOCKER_CONFIG_DIR}/prometheus/prometheus-data:/prometheus-data
+    #command: "--config.file=/etc/config/prometheus.yml"
+    #restart: unless-stopped
 
-  node-exporter:
-    container_name: node-exporter
-    image: quay.io/prometheus/node-exporter:latest
-    network_mode: host
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
-    volumes:
-      - /:/host:ro, slave
-      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
-    command:
-      - --path.rootfs=/host
-      - --collector.systemd
-    restart: unless-stopped
+  #node-exporter:
+    #container_name: node-exporter
+    #image: quay.io/prometheus/node-exporter:latest
+    #network_mode: host
+    #environment:
+      #- PUID=${PUID}
+      #- PGID=${PGID}
+      #- TZ=${TZ}
+    #volumes:
+      #- /:/host:ro, slave
+      #- /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
+    #command:
+      #- --path.rootfs=/host
+      #- --collector.systemd
+    #restart: unless-stopped
 
-  grafana:
-    container_name: grafana
-    image: grafana/grafana
-    ports:
-      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
-    environment:
-      - TZ=${TZ}
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
-      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
-    volumes:
-      - ${DOCKER_CONFIG_DIR}/grafana/provisioning/datasources.yml
-    restart: unless-stopped
+  #grafana:
+    #container_name: grafana
+    #image: grafana/grafana
+    #ports:
+      #- "${GRAFANA_PORT}:${GRAFANA_PORT}"
+    #environment:
+      #- TZ=${TZ}
+      #- PUID=${PUID}
+      #- PGID=${PGID}
+      #- GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
+      #- GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    #volumes:
+      #- ${DOCKER_CONFIG_DIR}/grafana/provisioning/datasources.yml
+    #restart: unless-stopped
 
   pihole:
     container_name: pihole
