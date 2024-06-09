@@ -52,28 +52,6 @@ services:
       - ${OVERSEER_PORT}:${OVERSEER_PORT}
     restart: unless-stopped
 
-  #gluetun:
-    #image: qmcgaw/gluetun
-    #container_name: gluetun
-    #cap_add:
-      #- NET_ADMIN
-    #ports:
-      #- "${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}"
-      #- "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}"
-      #- "${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp"
-   # devices:
-    #- /dev/net/tun
-    #volumes:
-    #- ${DOCKER_CONFIG_DIR}/gluetun:/gluetun
-    #environment:
-      #- TZ=${TZ}
-      #- VPN_SERVICE_PROVIDER=airvpn
-      #- VPN_TYPE=wireguard
-      #- WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
-      #- WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
-      #- WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      #- FIREWALL_VPN_INPUT_PORTS=${VPN_FORWARDED_PORT}
-
   ## Download clients ##
   transmission:
     container_name: transmission
@@ -103,22 +81,41 @@ services:
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
 
-  #qbittorrent:
-    #container_name: qbittorrent
-    #image: lscr.io/linuxserver/qbittorrent:latest
-    #network_mode: service:gluetun
-    #environment:
-      #- PUID=${PUID}
-      #- PGID=${PGID}
-      #- TZ={TZ}
-      #- WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
-    #volumes:
-      #- ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
-      #- ${DOWNLOAD_DIR}:/downloads
-      #- ${MEDIA_DIR}:/media
-    #restart: unless-stopped
-    #depends_on:
-      #- gluetun
+  qbittorrent:
+    container_name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    ports:
+      - ${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}
+      - ${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}
+      - ${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ={TZ}
+      - WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
+      - TORRENTING_PORT=${QBITTORRENT_CONNECTION_PORT}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
+      - ${DOWNLOAD_DIR}:/downloads
+      - ${MEDIA_DIR}:/media
+    restart: unless-stopped
+
+  nzbget:
+    image: ghcr.io/linuxserver/nzbget
+    container_name: nzbget
+    environment:
+      - PUID=${PUID}
+      - PGID=${PUID}
+      - TZ=${TZ}
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/nzbget/data:/config
+      - ${DOWNLOAD_DIR}:/downloads
+    ports:
+      - ${NZBGET_PORT}:${NZBGET_PORT}
+    restart: unless-stopped
 
 ## aars ##
 
@@ -189,53 +186,6 @@ services:
       - ${TV_DIR}:/tv
     restart: unless-stopped
 
-## System Monitoring
-  #prometheus:
-    #container_name: prometheus
-    #image: prom/prometheus
-    #ports:
-      #- "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
-    #environment:
-      #- TZ=${TZ}
-      #- PUID=${PUID}
-      #- PGID=${PGID}
-    #volumes:
-      #- ${DOCKER_CONFIG_DIR}/prometheus/config/prometheus.yml:/etc/config/prometheus.yml
-      #- ${DOCKER_CONFIG_DIR}/prometheus/prometheus-data:/prometheus-data
-    #command: "--config.file=/etc/config/prometheus.yml"
-    #restart: unless-stopped
-
-  #node-exporter:
-    #container_name: node-exporter
-    #image: quay.io/prometheus/node-exporter:latest
-    #network_mode: host
-    #environment:
-      #- PUID=${PUID}
-      #- PGID=${PGID}
-      #- TZ=${TZ}
-    #volumes:
-      #- /:/host:ro, slave
-      #- /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro
-    #command:
-      #- --path.rootfs=/host
-      #- --collector.systemd
-    #restart: unless-stopped
-
-  #grafana:
-    #container_name: grafana
-    #image: grafana/grafana
-    #ports:
-      #- "${GRAFANA_PORT}:${GRAFANA_PORT}"
-    #environment:
-      #- TZ=${TZ}
-      #- PUID=${PUID}
-      #- PGID=${PGID}
-      #- GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER}
-      #- GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
-    #volumes:
-      #- ${DOCKER_CONFIG_DIR}/grafana/provisioning/datasources.yml
-    #restart: unless-stopped
-
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
@@ -243,13 +193,26 @@ services:
       - "${PIHOLE_WEB_PORT}:${PIHOLE_WEB_PORT}/tcp"
       - "${PIHOLE_WEB_PORT}:${PIHOLE_WEB_PORT}/udp"
       - "67:67/udp"
-      - "8484:${PIHOLE_CONNECTION_PORT}/tcp" # Mapped 8484 to 80
+      - "8484:${PIHOLE_CONNECTION_PORT}/tcp"
     environment:
       TZ: ${TZ}
       WEBPASSWORD: ${PIHOLE_WEB_PASSWORD}
       FTLCONF_LOCAL_IPV4: ${SERVER_LAN_IP}
-      PIHOLE_DNS: 1.1.1.1;1.0.0.1 #CloudFlare DNS
+      PIHOLE_DNS: 1.1.1.1;1.0.0.1
     volumes:
       - "${DOCKER_CONFIG_DIR}/pihole:/etc/pihole"
       - "${DOCKER_CONFIG_DIR}/dnsmasq.d:/etc/dnsmasq.d"
     restart: unless-stopped
+
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/tautulli/config:/config
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - ${TAUTULLI_PORT}:${TAUTULLI_PORT}
