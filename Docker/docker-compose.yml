@@ -208,6 +208,7 @@ services:
     image: ghcr.io/tautulli/tautulli
     container_name: tautulli
     restart: unless-stopped
+    network_mode: host
     volumes:
       - ${DOCKER_CONFIG_DIR}/tautulli/config:/config
     environment:
