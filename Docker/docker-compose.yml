@@ -81,28 +81,9 @@ services:
       - ${MEDIA_DIR}:/media
     restart: unless-stopped
 
-  qbittorrent:
-    container_name: qbittorrent
-    image: lscr.io/linuxserver/qbittorrent:latest
-    ports:
-      - ${QBITTORRENT_WEB_UI_PORT}:${QBITTORRENT_WEB_UI_PORT}
-      - ${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}
-      - ${QBITTORRENT_CONNECTION_PORT}:${QBITTORRENT_CONNECTION_PORT}/udp
-    environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ={TZ}
-      - WEBUI_PORT=${QBITTORRENT_WEB_UI_PORT}
-      - TORRENTING_PORT=${QBITTORRENT_CONNECTION_PORT}
-    volumes:
-      - ${DOCKER_CONFIG_DIR}/qbittorrent/config:/config
-      - ${DOWNLOAD_DIR}:/downloads
-      - ${MEDIA_DIR}:/media
-    restart: unless-stopped
-
-  nzbget:
-    image: ghcr.io/linuxserver/nzbget
-    container_name: nzbget
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
     environment:
       - PUID=${PUID}
       - PGID=${PUID}
@@ -111,10 +92,10 @@ services:
       - "1.1.1.1"
       - "1.0.0.1"
     volumes:
-      - ${DOCKER_CONFIG_DIR}/nzbget/data:/config
+      - ${DOCKER_CONFIG_DIR}/sabnzbd/config:/config
       - ${DOWNLOAD_DIR}:/downloads
     ports:
-      - ${NZBGET_PORT}:${NZBGET_PORT}
+      - ${SABNZBD}:${SABNZBD}
     restart: unless-stopped
 
 ## aars ##
