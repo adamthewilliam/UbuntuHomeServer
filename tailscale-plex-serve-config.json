@@ -1,0 +1,18 @@
+{
+  "tcp": {
+    "32400": {
+      "policy": {
+        "accept": {
+          "members": ["*"]
+        }
+      }
+    },
+    "8100": {
+      "policy": {
+        "accept": {
+          "members": ["*"]
+        }
+      }
+    }
+  }
+}
