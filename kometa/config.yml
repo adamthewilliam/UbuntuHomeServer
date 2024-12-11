@@ -1,0 +1,182 @@
+## This file is a template remove the .template to use the file
+
+libraries:                           # This is called out once within the config.yml file
+  Movies:                            # These are names of libraries in your Plex
+    remove_overlays: false           # Set this to true to remove all overlays
+    collection_files:
+      - default: basic               # This is a file within Kometa's defaults folder
+      - default: imdb                # This is a file within Kometa's defaults folder
+      # see the wiki for how to use local files, folders, URLs, or files from git
+    overlay_files:
+      - default: resolution                                                    # 1, 4
+      - default: audio_codec                                                   # 2
+      - default: mediastinger                                                  # 3
+      - default: ratings                                                       # 5, 6, 7
+        template_variables:
+          rating1: user                                                    # 5 as this is user and mass_user_rating_update: mdb_tomatoes
+          rating1_image: rt_tomato                                         # 5 as this is user and mass_user_rating_update: mdb_tomatoes
+          rating1_font: config/custom_fonts/Adlib.ttf                      # 5 local font accessible to Kometa
+          rating1_font_size: 63                                            # 5 adjusted font size to fit rating
+
+          rating2: critic                                                  # 6 as this is critic and mass_critic_rating_update: imdb
+          rating2_image: imdb                                              # 6 as this is critic and mass_critic_rating_update: imdb
+          rating2_font: config/custom_fonts/Impact.ttf                     # 6 local font accessible to Kometa
+          rating2_font_size: 70                                            # 6 adjusted font size to fit rating
+
+          rating3: audience                                                # 7 as this is audience and mass_audience_rating_update: tmdb
+          rating3_image: tmdb                                              # 7 as this is audience and mass_audience_rating_update: tmdb
+          rating3_font: config/custom_fonts/Avenir_95_Black.ttf            # 7 local font accessible to Kometa
+          rating3_font_size: 70                                            # 7 adjusted font size to fit rating
+
+          horizontal_position: right                                       # the set of ratings is on the right of the poster
+      - default: streaming                                                     # 8
+      - default: video_format                                                  # 9
+      - default: language_count                                                # 10
+    operations:
+      mass_user_rating_update: mdb_tomatoes                              # 5 This operation will update the user rating in plex with Rotten Tomatoes ratings information gathered through mdblist.com (mdblist config required)
+      mass_critic_rating_update: imdb                                    # 6 This operation will update the critic rating in plex with IMDb ratings information
+      mass_audience_rating_update: tmdb                                  # 7 This operation will update the audience rating in plex with TMDb ratings information
+  Tv:
+    remove_overlays: false           # Set this to true to remove all overlays
+    collection_files:
+      - default: basic               # This is a file within Kometa's defaults folder
+      - default: imdb                # This is a file within Kometa's defaults folder
+      # see the wiki for how to use local files, folders, URLs, or files from git
+    overlay_files:
+      - default: resolution                                                    # 1
+      - default: audio_codec                                                   # 2
+      - default: mediastinger                                                  # 3
+      - default: ratings                                                       # 4, 5, 6
+        template_variables:           
+          rating1: user                                                    # 4 as this is user and mass_user_rating_update: mdb_tomatoes
+          rating1_image: rt_tomato                                         # 4 as this is user and mass_user_rating_update: mdb_tomatoes
+          rating1_font: config/custom_fonts/Adlib.ttf                      # 4 local font accessible to Kometa
+          rating1_font_size: 63                                            # 4 adjusted font size to fit rating
+
+          rating2: critic                                                  # 5 as this is critic and mass_critic_rating_update: imdb
+          rating2_image: imdb                                              # 5 as this is critic and mass_critic_rating_update: imdb
+          rating2_font: config/custom_fonts/Impact.ttf                     # 5 local font accessible to Kometa
+          rating2_font_size: 70                                            # 5 adjusted font size to fit rating
+
+          rating3: audience                                                # 6 as this is audience and mass_audience_rating_update: tmdb
+          rating3_image: tmdb                                              # 6 as this is audience and mass_audience_rating_update: tmdb
+          rating3_font: config/custom_fonts/Avenir_95_Black.ttf            # 6 local font accessible to Kometa
+          rating3_font_size: 70                                            # 6 adjusted font size to fit rating
+
+          horizontal_position: right                                       # the set of ratings is on the right of the poster
+      - default: streaming                                                     # 7
+      - default: video_format                                                  # 8
+    operations:
+      mass_user_rating_update: mdb_tomatoes                              # 4 This operation will update the user rating in plex with Rotten Tomatoes ratings information gathered through mdblist.com (mdblist config required)
+      mass_critic_rating_update: imdb                                    # 5 This operation will update the critic rating in plex with IMDb ratings information
+      mass_audience_rating_update: tmdb                                  # 6 This operation will update the audience rating in plex with TMDb ratings information
+
+playlist_files:
+  - default: playlist                # This is a file within Kometa's defaults folder
+    template_variables:
+      libraries: Movies, TV Shows    # list of libraries that you want the Kometa Defaults playlists to look at
+  # see the wiki for how to use local files, folders, URLs, or files from git
+settings:
+  run_order:
+  - operations
+  - metadata
+  - collections
+  - overlays
+  cache: true
+  cache_expiration: 60
+  asset_directory: config/assets
+  asset_folders: true
+  asset_depth: 0
+  create_asset_folders: false
+  prioritize_assets: false
+  dimensional_asset_rename: false
+  download_url_assets: false
+  show_missing_season_assets: false
+  show_missing_episode_assets: false
+  show_asset_not_needed: true
+  sync_mode: append
+  minimum_items: 1
+  default_collection_order:
+  delete_below_minimum: true
+  delete_not_scheduled: false
+  run_again_delay: 2
+  missing_only_released: false
+  only_filter_missing: false
+  show_unmanaged: true
+  show_unconfigured: true
+  show_filtered: false
+  show_options: true
+  show_missing: true
+  show_missing_assets: true
+  save_report: false
+  tvdb_language: eng
+  ignore_ids:
+  ignore_imdb_ids:
+  item_refresh_delay: 0
+  playlist_sync_to_users: all
+  playlist_exclude_users:
+  playlist_report: false
+  verify_ssl: true
+  custom_repo:
+  overlay_artwork_filetype: jpg
+  overlay_artwork_quality: 75
+webhooks:                            # Can be individually specified per library as well
+  error:
+  version:
+  run_start:
+  run_end:
+  changes:
+plex:                                # Can be individually specified per library as well; REQUIRED for the script to run
+  url: http://192.168.1.130:8100
+  token: jG9ryPKAhZ6y1pbHXpEJ
+  timeout: 60
+  db_cache:
+  clean_bundles: false
+  empty_trash: false
+  optimize: false
+  verify_ssl:
+tmdb:                                # REQUIRED for the script to run
+  apikey: 7c4af832bae87d8200cc5fbb0ab94d9b
+  language: en
+tautulli:                            # Can be individually specified per library as well
+  url: http://192.168.1.130:9191
+  apikey: a361f45a5a094728b8e7c43a1750889a
+omdb:
+  apikey: ########
+  cache_expiration: 60
+mdblist:
+  apikey: #########################
+  cache_expiration: 60
+radarr:                              # Can be individually specified per library as well
+  url: http://192.168.1.130:7878
+  token: bf901f2a6cfe4c7f823fc040dc908c23
+  add_missing: false
+  add_existing: false
+  upgrade_existing: false
+  monitor_existing: false
+  root_folder_path: "S:/data/media/movies"
+  monitor: true
+  availability: announced
+  quality_profile: HD-1080p
+  tag:
+  search: false
+  radarr_path:
+  plex_path:
+sonarr:                              # Can be individually specified per library as well
+  url: http://192.168.1.130:8989
+  token: bf462f4fae754e269f8e5328f31e179d
+  add_missing: false
+  add_existing: false
+  upgrade_existing: false
+  monitor_existing: false
+  root_folder_path: "S:/data/media/tv"
+  monitor: all
+  quality_profile: HD-1080p
+  language_profile: English
+  series_type: standard
+  season_folder: true
+  tag:
+  search: false
+  cutoff_search: false
+  sonarr_path:
+  plex_path:

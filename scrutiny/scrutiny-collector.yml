@@ -1,0 +1,12 @@
+version: 1
+host:
+  id: ""
+devices:
+  - device: /dev/sda
+    type: 'sat'
+  - device: /dev/sdb
+    type: 'sat'
+  - device: /dev/sdza
+    type: 'nvme'
+  - device: /dev/sdzb
+    type: 'nvme'

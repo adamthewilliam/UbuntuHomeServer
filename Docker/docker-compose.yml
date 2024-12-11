@@ -25,24 +25,17 @@ services:
 
   tailscale-plex:
     image: tailscale/tailscale:latest
-    hostname: tailscale-plex
+    container_name: tailscale-plex
+    hostname: plex
     environment:
       - TS_AUTHKEY=${TAILSCALE_PLEX_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       #- TS_SERVE_CONFIG=/etc/tailscale/serve.json
-    ports:
-      - "${PLEX_WEB_PORT}:32400"
-      - "1900:1900"
-      - "3005:3005"
-      - "5353:5353"
-      - "8324:8324"
-      - "32410:32410"
-      - "32412:32412"
-      - "32413:32413"
-      - "32414:32414"
-      - "32469:32469"
+    dns:
+      - "1.1.1.1"
+      - "8.8.8.8"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-plex/state:/var/lib/tailscale
     devices:
@@ -50,9 +43,18 @@ services:
     cap_add:
       - net_admin
       - sys_module
-    networks:
-      - tailscale_network
-      - default
+    ports:
+      - "0.0.0.0:8100:32400" # Main plex port
+      - "0.0.0.0:32400:32400"
+      - "0.0.0.0:1909:1900/udp"
+      - "0.0.0.0:3005:3005" 
+      - "0.0.0.0:5555:5353/udp"
+      - "0.0.0.0:8324:8324" 
+      - "0.0.0.0:32410:32410/udp" 
+      - "0.0.0.0:32412:32412/udp"  
+      - "0.0.0.0:32413:32413/udp" 
+      - "0.0.0.0:32414:32414/udp"  
+      - "0.0.0.0:32469:32469"
     #configs: 
       #- source: tailscale-plex-serve-config.json
         #target: /etc/tailscale/serve.json
@@ -66,6 +68,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - VERSION=docker
+      - PLEX_CLAIM=
     volumes:
       - ${DOCKER_CONFIG_DIR}/plex/config:/config
       - ${MEDIA_DIR}
@@ -74,19 +77,23 @@ services:
       - /dev/dri:/dev/dri
     depends_on:
       - tailscale-plex
-    network_mode: service:tailscale-plex 
+    network_mode: service:tailscale-plex
     restart: unless-stopped
 
   tailscale-overseerr:
     image: tailscale/tailscale:latest
-    hostname: tailscale-overseerr
+    container_name: tailscale-overseerr
+    hostname: overseerr
     environment:
       - TS_AUTHKEY=${TAILSCALE_OVERSEERR_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
+    dns:
+      - "1.1.1.1"
+      - "8.8.8.8"
     ports:
-      - ${OVERSEER_PORT}:${OVERSEER_PORT}
+      - "0.0.0.0:5055:5055"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-overseerr/state:/var/lib/tailscale
     devices:
@@ -94,9 +101,6 @@ services:
     cap_add:
       - net_admin
       - sys_module
-    networks:
-      - tailscale_network
-      - default
     restart: unless-stopped
 
   overseerr:
@@ -105,12 +109,22 @@ services:
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
-      - TZ=Etc/UTC
+      - TZ=${TZ}
     volumes:
       - ${DOCKER_CONFIG_DIR}/overseerr/config:/config
     depends_on:
       - tailscale-overseerr
     network_mode: service:tailscale-overseerr
+    restart: unless-stopped
+
+  kometa:
+    image: kometateam/kometa
+    container_name: kometa
+    environment:
+      - TZ=${TZ}
+    volumes:
+      - ${DOCKER_CONFIG_DIR}/kometa/config:/config
+    command: --run
     restart: unless-stopped
 
   ## Download clients ##
@@ -230,7 +244,6 @@ services:
     image: ghcr.io/tautulli/tautulli
     container_name: tautulli
     restart: unless-stopped
-    network_mode: host
     volumes:
       - ${DOCKER_CONFIG_DIR}/tautulli/config:/config
     environment:
@@ -238,5 +251,28 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     ports:
-      - ${TAUTULLI_PORT}:${TAUTULLI_PORT}
-  
+      - ${TAUTULLI_PORT}:8181
+
+  scrutiny:
+    container_name: scrutiny
+    image: ghcr.io/analogj/scrutiny:master-omnibus
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    ports:
+      - "6090:8080" # webapp
+      - "8086:8086" # influxDB admin
+    volumes:
+      - /run/udev:/run/udev:ro
+      - ${DOCKER_CONFIG_DIR}/scrutiny/config:/config
+      - ${DOCKER_CONFIG_DIR}/scrutiny/influxdb:/influxdb
+    devices:
+      - /dev/sda:/dev/sda    # 3.7TB external hard drive
+      - /dev/sdb:/dev/sdb    # 9.1TB internal hard drive 
+      - /dev/sdza:/dev/sdza  # 953.9GB nvme ssd
+      - /dev/sdzb:/dev/sdzb  # 953.9GB nvme ssd
+    environment:
+      - SCRUTINY_WEB_INFLUXDB_TOKEN=${SCRUTINY_WEB_INFLUX_DB_TOKEN}
+      - SCRUTINY_WEB_INFLUXDB_INIT_USERNAME=${SCRUTINY_WEB_INFLUX_DB_INIT_USERNAME}
+      - SCRUTINY_WEB_INFLUXDB_INIT_PASSWORD=${SCRUTINY_WEB_INFLUX_DB_INIT_PASSWORD}
+    restart: unless-stopped
