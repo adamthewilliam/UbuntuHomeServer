@@ -6,6 +6,9 @@ libraries:                           # This is called out once within the config
     collection_files:
       - default: basic               # This is a file within Kometa's defaults folder
       - default: imdb                # This is a file within Kometa's defaults folder
+      - default: resolution
+      - default: streaming
+      - default: genre
       # see the wiki for how to use local files, folders, URLs, or files from git
     overlay_files:
       - default: resolution                                                    # 1, 4
@@ -41,6 +44,10 @@ libraries:                           # This is called out once within the config
     collection_files:
       - default: basic               # This is a file within Kometa's defaults folder
       - default: imdb                # This is a file within Kometa's defaults folder
+      - default: resolution
+      - default: streaming
+      - default: network
+      - default: genre
       # see the wiki for how to use local files, folders, URLs, or files from git
     overlay_files:
       - default: resolution                                                    # 1
