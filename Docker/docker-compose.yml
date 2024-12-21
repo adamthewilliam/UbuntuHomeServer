@@ -32,12 +32,13 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
-      #- TS_SERVE_CONFIG=/etc/tailscale/serve.json
+      - TS_SERVE_CONFIG=/config/plex-serve-config.json
     dns:
       - "1.1.1.1"
       - "8.8.8.8"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-plex/state:/var/lib/tailscale
+      - ${DOCKER_CONFIG_DIR}/tailscale-plex/config:/config
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
@@ -55,9 +56,6 @@ services:
       - "0.0.0.0:32413:32413/udp" 
       - "0.0.0.0:32414:32414/udp"  
       - "0.0.0.0:32469:32469"
-    #configs: 
-      #- source: tailscale-plex-serve-config.json
-        #target: /etc/tailscale/serve.json
     restart: unless-stopped
 
   plex:
@@ -89,6 +87,7 @@ services:
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
+      - TS_SERVE_CONFIG=/config/overseerr-serve-config.json
     dns:
       - "1.1.1.1"
       - "8.8.8.8"
@@ -96,6 +95,7 @@ services:
       - "0.0.0.0:5055:5055"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-overseerr/state:/var/lib/tailscale
+      - ${DOCKER_CONFIG_DIR}/tailscale-overseerr/config:/config
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:

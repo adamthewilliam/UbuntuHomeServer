@@ -1,0 +1,19 @@
+{
+    "TCP": {
+      "5055": {
+        "HTTPS": true
+      }
+    },
+    "Web": {
+      "${TS_CERT_DOMAIN}:5055": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:5055"
+          }
+        }
+      }
+    },
+    "AllowFunnel": {
+      "${TS_CERT_DOMAIN}:5055": false
+    }
+  }

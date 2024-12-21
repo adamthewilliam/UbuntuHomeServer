@@ -1,0 +1,19 @@
+{
+    "TCP": {
+      "32400": {
+        "HTTPS": true
+      }
+    },
+    "Web": {
+      "${TS_CERT_DOMAIN}:32400": {
+        "Handlers": {
+          "/": {
+            "Proxy": "http://127.0.0.1:32400"
+          }
+        }
+      }
+    },
+    "AllowFunnel": {
+      "${TS_CERT_DOMAIN}:32400": false
+    }
+  }
