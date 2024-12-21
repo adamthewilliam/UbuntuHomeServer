@@ -1,7 +1,10 @@
 {
     "TCP": {
-      "32400": {
+      "443": {
         "HTTPS": true
+      },
+      "80": {
+        "HTTPS": false
       }
     },
     "Web": {
@@ -14,6 +17,7 @@
       }
     },
     "AllowFunnel": {
-      "${TS_CERT_DOMAIN}:32400": false
+      "${TS_CERT_DOMAIN}:443": false,
+      "${TS_CERT_DOMAIN}:80": false
     }
   }
