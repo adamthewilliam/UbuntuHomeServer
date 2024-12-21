@@ -268,7 +268,8 @@ services:
       - ${DOCKER_CONFIG_DIR}/scrutiny/influxdb:/influxdb
     devices:
       - /dev/sda:/dev/sda    # 3.7TB external hard drive
-      - /dev/sdb:/dev/sdb    # 9.1TB internal hard drive 
+      - /dev/sdb:/dev/sdb    # 9.1TB internal hard drive - HDD4
+      - /dev/sdc:/dev/sdc    # 9.1TB internal hard drive - HDD3
       - /dev/sdza:/dev/sdza  # 953.9GB nvme ssd
       - /dev/sdzb:/dev/sdzb  # 953.9GB nvme ssd
     environment:
