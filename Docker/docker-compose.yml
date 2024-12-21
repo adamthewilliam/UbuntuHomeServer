@@ -33,9 +33,6 @@ services:
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_SERVE_CONFIG=/config/plex-serve-config.json
-    dns:
-      - "1.1.1.1"
-      - "8.8.8.8"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-plex/state:/var/lib/tailscale
       - ${DOCKER_CONFIG_DIR}/tailscale-plex/config:/config
@@ -88,9 +85,6 @@ services:
       - TS_USERSPACE=false
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_SERVE_CONFIG=/config/overseerr-serve-config.json
-    dns:
-      - "1.1.1.1"
-      - "8.8.8.8"
     ports:
       - "0.0.0.0:5055:5055"
     volumes:
