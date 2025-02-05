@@ -53,6 +53,9 @@ services:
       - "0.0.0.0:32413:32413/udp" 
       - "0.0.0.0:32414:32414/udp"  
       - "0.0.0.0:32469:32469"
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
     restart: unless-stopped
 
   plex:
@@ -63,7 +66,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - VERSION=docker
-      - PLEX_CLAIM=
+      - PLEX_CLAIM=${PLEX_CLAIM}
     volumes:
       - ${DOCKER_CONFIG_DIR}/plex/config:/config
       - ${MEDIA_DIR}
@@ -87,6 +90,9 @@ services:
       - TS_SERVE_CONFIG=/config/overseerr-serve-config.json
     ports:
       - "0.0.0.0:5055:5055"
+    dns:
+      - "1.1.1.1"
+      - "1.0.0.1"
     volumes:
       - ${DOCKER_CONFIG_DIR}/tailscale-overseerr/state:/var/lib/tailscale
       - ${DOCKER_CONFIG_DIR}/tailscale-overseerr/config:/config
