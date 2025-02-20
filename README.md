@@ -1,4 +1,3 @@
-```markdown
 # Setting Up a Media Server with Docker Compose on Ubuntu
 
 This guide walks you through setting up a media server on Ubuntu (or other Docker-compatible OS) using Docker Compose.  This approach containerizes various applications for easier maintenance and management.
@@ -161,105 +160,72 @@ The `.env` file stores environment variables used by Docker Compose.
 
 3.  **Add environment variables:**  Populate the `.env` file with the following variables.  **Replace the placeholder values with your actual values.**
 
-```
 ## Directories ##
-DOCKER_CONFIG_DIR=/docker/appdata
-BASE_DIR=/mnt/media/media-server/data
-DOWNLOAD_DIR=/mnt/media/media-server/data/downloads
-MEDIA_DIR=/mnt/media/media-server/data/media
-TV_DIR=/mnt/media/media-server/data/media/tv
-MOVIES_DIR=/mnt/media/media-server/data/media/movies
+- `DOCKER_CONFIG_DIR=/docker/appdata`
+- `BASE_DIR=/mnt/media/media-server/data`
+- `DOWNLOAD_DIR=/mnt/media/media-server/data/downloads`
+- `MEDIA_DIR=/mnt/media/media-server/data/media`
+- `TV_DIR=/mnt/media/media-server/data/media/tv`
+- `MOVIES_DIR=/mnt/media/media-server/data/media/movies`
 
 ## User ##
-PUID=1000  # Your user ID (run `id -u`)
-PGID=1000  # Your group ID (run `id -g`)
-TZ="Europe/London"  # Your timezone (e.g., "America/Los_Angeles")
+- `PUID=1000` - Your user ID (run `id -u`)
+- `PGID=1000` - Your group ID (run `id -g`)
+- `TZ="Europe/London"` - Your timezone (e.g., "America/Los_Angeles")
 
 ## Portainer ##
-PORTAINER_PORT=9000
+`PORTAINER_PORT=9000`
 
 ## Plex ##
-PLEX_CLAIM= # Your Plex Claim Token (Optional, if claiming a new server)
+`PLEX_CLAIM=` # Your Plex Claim Token (Optional, if claiming a new server)
 
 ## Tailscale
-TAILSCALE_PLEX_AUTH_KEY=tskey- # Generate a reusable key from the Tailscale dashboard
-TAILSCALE_OVERSEERR_AUTH_KEY=tskey- # Generate a reusable key from the Tailscale dashboard
+- `TAILSCALE_PLEX_AUTH_KEY=tskey-` # Generate a reusable key from the Tailscale dashboard
+- `TAILSCALE_OVERSEERR_AUTH_KEY=tskey-` # Generate a reusable key from the Tailscale dashboard
 
 ## Overseerr ##
-OVERSEERR_WEB_PORT=5055
+`OVERSEERR_WEB_PORT=5055`
 
 ## Transmission ##
-TRANSMISSION_WEBUI_PORT=9091
-TRANSMISSION_CONNECTION_PORT=51413
+- `TRANSMISSION_WEBUI_PORT=9091`
+- `TRANSMISSION_CONNECTION_PORT=51413`
 
-TRANSMISSION_WEBUI_USER=user # Change to your desired username
-TRANSMISSION_WEBUI_PASS=strong-password # Change to a strong password
+- `TRANSMISSION_WEBUI_USER=user` # Change to your desired username
+- `TRANSMISSION_WEBUI_PASS=strong-password` # Change to a strong password
 
-TRANSMISSION_MAX_RETENTION=2592000
-TRANSMISSION_CONNECTION_PORT=10
-
-## Qbittorrent ##
-QBITTORRENT_WEB_UI_PORT=8080
-QBITTORRENT_CONNECTION_PORT=6881
+- `TRANSMISSION_MAX_RETENTION=2592000`
+- `TRANSMISSION_CONNECTION_PORT=10`
 
 ## Prowlarr ##
-PROWLARR_PORT=9696
-PROWLARR_API_KEY= # Get this from Prowlarr's settings after setup
+- `PROWLARR_PORT=9696`
+- `PROWLARR_API_KEY=` # Get this from Prowlarr's settings after setup
 
 ## Radarr ##
-RADARR_PORT=7878
-RADARR_API_KEY= # Get this from Radarr's settings after setup
+- `RADARR_PORT=7878`
+- `RADARR_API_KEY=` # Get this from Radarr's settings after setup
 
 ## Sonarr ##
-SONARR_PORT=8989
-SONARR_API_KEY= # Get this from Sonarr's settings after setup
+- `SONARR_PORT=8989`
+- `SONARR_API_KEY=` # Get this from Sonarr's settings after setup
 
 ## Bazarr ##
-BAZARR_PORT=6767
-
-## Heimdall ##
-HEIMDALL_PORT=8888
-HEIMDALL_SSL_PORT=4444
+`BAZARR_PORT=6767`
 
 ## PiHole ##
-PIHOLE_WEB_PASSWORD=strong-password # Set a strong password
-PIHOLE_WEB_PORT=53
-PIHOLE_CONNECTION_PORT=80
-SERVER_LAN_IP=192.168.1.125 # The static IP address of your server
-
-## Prometheus  ##
-PROMETHEUS_PORT=9090
-
-## Node-exporter ##
-NODE_EXPORTER_PORT=9100
-
-## Grafana ##
-GRAFANA_PORT=3000
-GF_SECURITY_ADMIN_USER="admin"
-GF_SECURITY_ADMIN_PASSWORD="grafana"
+`PIHOLE_WEB_PASSWORD=strong-password` # Set a strong password
+`PIHOLE_WEB_PORT=53`
+`PIHOLE_CONNECTION_PORT=80`
+`SERVER_LAN_IP=192.168.1.125` # The static IP address of your server
 
 ## Sabnzbd ##
-SABNZBD=8080
+`SABNZBD=8080`
 
 ## Scrutiny ##
-SCRUTINY_WEB_INFLUX_DB_TOKEN=
-SCRUTINY_WEB_INFLUXDB_INIT_USERNAME=
-SCRUTINY_WEB_INFLUXDB_INIT_PASSWORD=
-USENET_BASE_DIR=/mnt/media/media-server/data/usenet
-TORRENTS_BASE_DIR=/mnt/media/media-server/data/torrents
-```
-
-*   **Explanation of Important Variables:**
-
-    *   `PUID` and `PGID`:  These variables define the user and group IDs that the containers will run under. This is critical for file permissions.  Use `id -u` and `id -g` to find your user and group IDs, respectively.
-
-    *   `TZ`:  Your timezone, used for accurate scheduling.
-
-    *   `API_KEY` variables (Radarr, Sonarr, Prowlarr): You'll get these *after* you initially set up those containers through their web UI. They are used for inter-application communication.
-
-    *   `SERVER_LAN_IP`:  The static IP address of your server. Important if you're using Pi-hole for DNS.
-
-    *   `MEDIA_DIR`, `DOWNLOAD_DIR`: Defines where all of the data will be stored on the server
+`SCRUTINY_WEB_INFLUX_DB_TOKEN=`
+`SCRUTINY_WEB_INFLUXDB_INIT_USERNAME=`
+`SCRUTINY_WEB_INFLUXDB_INIT_PASSWORD=`
+`USENET_BASE_DIR=/mnt/media/media-server/data/usenet`
+`TORRENTS_BASE_DIR=/mnt/media/media-server/data/torrents`
 
 4.  **Save the file and exit.**
 
