@@ -325,22 +325,8 @@ Access the web UIs of each service using the ports defined in your `docker-compo
 
     In the tailscale dashboard under "machines" disable key expiry to ensure the container stays connected to your tailnet.
 
-4.  **Enable subnet routes**
+4. Go to your Tailscale dashboard and add any devices that you would like to access plex or overseerr on outside of the LAN hosting your Ubuntu server.
 
-    This allows your tailnet to communicate with all the services using their local ip's instead of needing tailscale to do the job.
-    To do this, click "Edit route settings..."
-
-5.  **Update the firewall**
-
-    Ensure you allow the tailscale IPs to access the local network. You can do this on UFW by running the following command
-
-    ```bash
-    sudo ufw allow from 100.64.0.0/10 to any
-    ```
-
-6.  **Test to ensure Tailscale works**
-
-    Access the portainer IP address via a different computer with tailscale installed and see if you can access all the services as if you were on the same network.
 
 ## Troubleshooting
 
